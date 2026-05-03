@@ -1,0 +1,93 @@
+<script>
+
+// 🔐 LOGIN
+const USER = "admin";
+const PASS = "1234";
+
+function login() {
+  const u = username.value;
+  const p = password.value;
+
+  if (u === USER && p === PASS) {
+    loginBox.style.display = "none";
+    mdt.classList.remove("hidden");
+    loadData();
+  } else {
+    alert("Λάθος στοιχεία!");
+  }
+}
+
+// 💾 DATA
+let citizens = JSON.parse(localStorage.getItem("citizens")) || [];
+
+function saveData() {
+  localStorage.setItem("citizens", JSON.stringify(citizens));
+}
+
+// ➕ ΠΡΟΣΘΗΚΗ
+function addCitizen() {
+  const name = document.getElementById("name").value;
+  const surname = document.getElementById("surname").value;
+  const age = document.getElementById("age").value;
+  const id = document.getElementById("id").value;
+  const wanted = document.getElementById("wantedCheck").checked;
+
+  if (!name || !surname || !id) {
+    return alert("Συμπλήρωσε τα βασικά!");
+  }
+
+  citizens.push({ name, surname, age, id, wanted });
+  saveData();
+  updateUI();
+}
+
+// 🔍 SEARCH
+function searchCitizen() {
+  const q = search.value.toLowerCase();
+  const results = document.getElementById("searchResults");
+
+  results.innerHTML = "";
+
+  const filtered = citizens.filter(c =>
+    c.name.toLowerCase().includes(q) ||
+    c.surname.toLowerCase().includes(q) ||
+    c.id.toLowerCase().includes(q)
+  );
+
+  filtered.forEach((c, index) => {
+    results.innerHTML += createCitizenHTML(c, index);
+  });
+}
+
+// ❌ DELETE
+function deleteCitizen(index) {
+  citizens.splice(index, 1);
+  saveData();
+  updateUI();
+}
+
+// 🎨 UI
+function createCitizenHTML(c, index) {
+  return `
+    <li>
+      ${c.name} ${c.surname} (${c.age || "-"}) - ${c.id}
+      ${c.wanted ? "🚨" : ""}
+      <button onclick="deleteCitizen(${index})">❌</button>
+    </li>
+  `;
+}
+
+function updateUI() {
+  const list = document.getElementById("citizensList");
+  list.innerHTML = "";
+
+  citizens.forEach((c, index) => {
+    list.innerHTML += createCitizenHTML(c, index);
+  });
+}
+
+function loadData() {
+  updateUI();
+}
+
+</script>
