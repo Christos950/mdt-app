@@ -1,81 +1,50 @@
-<!DOCTYPE html>
-<html lang="el">
-<head>
-<meta charset="UTF-8">
-<title>MDT ΕΛ.ΑΣ</title>
-
-<style>
-body { font-family: Arial; background:#0b1a2b; color:white; padding:20px;}
-h1 { color:#4da6ff; }
-input, button { padding:8px; margin:5px;}
-.box { background:#132c4d; padding:15px; border-radius:10px; margin-bottom:20px;}
-</style>
-</head>
-
-<body>
-
-<h1>📋 MDT</h1>
-
-<div class="box">
-  <h2>➕ Προσθήκη</h2>
-  <input id="name" placeholder="Όνομα">
-  <input id="surname" placeholder="Επώνυμο">
-  <input id="age" placeholder="Ηλικία">
-  <input id="id" placeholder="ID">
-  <button onclick="addCitizen()">Προσθήκη</button>
-</div>
-
-<div class="box">
-  <h2>🔍 Search</h2>
-  <input id="search" placeholder="Αναζήτηση">
-  <button onclick="search()">Search</button>
-  <ul id="results"></ul>
-</div>
-
-<div class="box">
-  <h2>📂 Πολίτες</h2>
-  <ul id="list"></ul>
-</div>
-
 <script>
 let citizens = [];
 
 function addCitizen() {
-  if(!name.value || !surname.value || !id.value) {
-    alert("Συμπλήρωσε όλα τα πεδία!");
+  const name = document.getElementById("name").value.trim();
+  const surname = document.getElementById("surname").value.trim();
+  const age = document.getElementById("age").value.trim();
+  const id = document.getElementById("id").value.trim();
+
+  if (!name || !surname || !id) {
+    alert("❌ Συμπλήρωσε Όνομα, Επώνυμο και ID!");
     return;
   }
 
-  citizens.push({
-    name: name.value,
-    surname: surname.value,
-    age: age.value,
-    id: id.value
-  });
+  citizens.push({ name, surname, age, id });
+
+  document.getElementById("name").value = "";
+  document.getElementById("surname").value = "";
+  document.getElementById("age").value = "";
+  document.getElementById("id").value = "";
 
   update();
 }
 
-function search() {
-  let q = search.value.toLowerCase();
+function searchCitizen() {
+  const q = document.getElementById("search").value.toLowerCase();
+  const results = document.getElementById("results");
+
   results.innerHTML = "";
 
-  citizens.filter(c =>
-    c.name.toLowerCase().includes(q) ||
-    c.surname.toLowerCase().includes(q) ||
-    c.id.toLowerCase().includes(q)
-  ).forEach(c => {
-    results.innerHTML += `<li>${c.name} ${c.surname} - ${c.id}</li>`;
-  });
+  citizens
+    .filter(c =>
+      c.name.toLowerCase().includes(q) ||
+      c.surname.toLowerCase().includes(q) ||
+      c.id.toLowerCase().includes(q)
+    )
+    .forEach(c => {
+      results.innerHTML += `<li>${c.name} ${c.surname} - ${c.id}</li>`;
+    });
 }
 
 function update() {
+  const list = document.getElementById("list");
   list.innerHTML = "";
+
   citizens.forEach(c => {
-    list.innerHTML += `<li>${c.name} ${c.surname} (${c.age}) - ${c.id}</li>`;
+    list.innerHTML += `<li>${c.name} ${c.surname} (${c.age || "-"}) - ${c.id}</li>`;
   });
 }
 </script>
-
-</body>
-</html>
