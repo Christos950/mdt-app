@@ -1,93 +1,81 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<title>MDT ΕΛ.ΑΣ</title>
+
+<style>
+body { font-family: Arial; background:#0b1a2b; color:white; padding:20px;}
+h1 { color:#4da6ff; }
+input, button { padding:8px; margin:5px;}
+.box { background:#132c4d; padding:15px; border-radius:10px; margin-bottom:20px;}
+</style>
+</head>
+
+<body>
+
+<h1>📋 MDT</h1>
+
+<div class="box">
+  <h2>➕ Προσθήκη</h2>
+  <input id="name" placeholder="Όνομα">
+  <input id="surname" placeholder="Επώνυμο">
+  <input id="age" placeholder="Ηλικία">
+  <input id="id" placeholder="ID">
+  <button onclick="addCitizen()">Προσθήκη</button>
+</div>
+
+<div class="box">
+  <h2>🔍 Search</h2>
+  <input id="search" placeholder="Αναζήτηση">
+  <button onclick="search()">Search</button>
+  <ul id="results"></ul>
+</div>
+
+<div class="box">
+  <h2>📂 Πολίτες</h2>
+  <ul id="list"></ul>
+</div>
+
 <script>
+let citizens = [];
 
-// 🔐 LOGIN
-const USER = "admin";
-const PASS = "1234";
-
-function login() {
-  const u = username.value;
-  const p = password.value;
-
-  if (u === USER && p === PASS) {
-    loginBox.style.display = "none";
-    mdt.classList.remove("hidden");
-    loadData();
-  } else {
-    alert("Λάθος στοιχεία!");
-  }
-}
-
-// 💾 DATA
-let citizens = JSON.parse(localStorage.getItem("citizens")) || [];
-
-function saveData() {
-  localStorage.setItem("citizens", JSON.stringify(citizens));
-}
-
-// ➕ ΠΡΟΣΘΗΚΗ
 function addCitizen() {
-  const name = document.getElementById("name").value;
-  const surname = document.getElementById("surname").value;
-  const age = document.getElementById("age").value;
-  const id = document.getElementById("id").value;
-  const wanted = document.getElementById("wantedCheck").checked;
-
-  if (!name || !surname || !id) {
-    return alert("Συμπλήρωσε τα βασικά!");
+  if(!name.value || !surname.value || !id.value) {
+    alert("Συμπλήρωσε όλα τα πεδία!");
+    return;
   }
 
-  citizens.push({ name, surname, age, id, wanted });
-  saveData();
-  updateUI();
+  citizens.push({
+    name: name.value,
+    surname: surname.value,
+    age: age.value,
+    id: id.value
+  });
+
+  update();
 }
 
-// 🔍 SEARCH
-function searchCitizen() {
-  const q = search.value.toLowerCase();
-  const results = document.getElementById("searchResults");
-
+function search() {
+  let q = search.value.toLowerCase();
   results.innerHTML = "";
 
-  const filtered = citizens.filter(c =>
+  citizens.filter(c =>
     c.name.toLowerCase().includes(q) ||
     c.surname.toLowerCase().includes(q) ||
     c.id.toLowerCase().includes(q)
-  );
-
-  filtered.forEach((c, index) => {
-    results.innerHTML += createCitizenHTML(c, index);
+  ).forEach(c => {
+    results.innerHTML += `<li>${c.name} ${c.surname} - ${c.id}</li>`;
   });
 }
 
-// ❌ DELETE
-function deleteCitizen(index) {
-  citizens.splice(index, 1);
-  saveData();
-  updateUI();
-}
-
-// 🎨 UI
-function createCitizenHTML(c, index) {
-  return `
-    <li>
-      ${c.name} ${c.surname} (${c.age || "-"}) - ${c.id}
-      ${c.wanted ? "🚨" : ""}
-      <button onclick="deleteCitizen(${index})">❌</button>
-    </li>
-  `;
-}
-
-function updateUI() {
-  const list = document.getElementById("citizensList");
+function update() {
   list.innerHTML = "";
-
-  citizens.forEach((c, index) => {
-    list.innerHTML += createCitizenHTML(c, index);
+  citizens.forEach(c => {
+    list.innerHTML += `<li>${c.name} ${c.surname} (${c.age}) - ${c.id}</li>`;
   });
 }
-
-function loadData() {
-  updateUI();
-}
-
 </script>
+
+</body>
+</html>
